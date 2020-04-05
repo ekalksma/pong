@@ -6,7 +6,8 @@ class Game {
     this.canvas.width = 500;
     this.canvas.height = 300;
 
-    this.paddle = new Paddle();
+    this.player1 = new Paddle({ x: 30, y: 30 }, { w: 50, h: 10 });
+    this.player2 = new Paddle({ x: this.canvas.width - 30, y: 30 }, { w: 50, h: 10 });
   }
 
   run() {
@@ -22,8 +23,7 @@ class Game {
   draw () {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(200, 100);
-    this.ctx.stroke();
+    this.player1.draw(this.ctx);
+    this.player2.draw(this.ctx);
   }
 }
