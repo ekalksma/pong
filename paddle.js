@@ -2,7 +2,7 @@ class Paddle {
   constructor(position, size) {
     this.position = position;
     this.size = size;
-    this.color = '#FF0000';
+    this.color = '#FFFFFF';
     this.speed = 3;
   }
 
