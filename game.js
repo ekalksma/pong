@@ -42,12 +42,25 @@ class Game {
     }
 
     if (!this.isInBoundsY(this.ball)) {
-      this.ball.speed.y *= -1;
+      this.ball.velocity.y *= -1;
     }
 
-    if (this.boundingBoxCollision(this.player, this.ball) ||
-        this.boundingBoxCollision(this.playerAi, this.ball)) {
-      this.ball.speed.x *= -1;
+    if (this.boundingBoxCollision(this.player, this.ball)) {
+      const distanceFromPaddleOrigin = this.ball.position.y - this.player.position.y;
+      const normalizedDistance = distanceFromPaddleOrigin / (this.player.size.h / 2);
+      const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
+
+      this.ball.velocity.x = this.ball.speed * Math.cos(bounceAngle);
+      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
+    }
+
+    if (this.boundingBoxCollision(this.playerAi, this.ball)) {
+      const distanceFromPaddleOrigin = this.ball.position.y - this.playerAi.position.y;
+      const normalizedDistance = distanceFromPaddleOrigin / (this.playerAi.size.h / 2);
+      const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
+
+      this.ball.velocity.x = this.ball.speed * -Math.cos(bounceAngle);
+      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
     }
 
     if (!this.isInBoundsX(this.ball)) {

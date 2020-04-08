@@ -4,12 +4,13 @@ class Ball {
     this.size = size;
     this.color = '#FFFFFF';
 
-    this.speed = { x: 3, y: 1 };
+    this.speed = 4; // px/s
+    this.velocity = { x: this.speed, y: 0 };
   }
 
   update() {
-    this.position.x -= this.speed.x;
-    this.position.y -= this.speed.y;
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
   }
 
   draw(ctx) {
@@ -22,10 +23,10 @@ class Ball {
   handleOutOfBounds(canvas) {
     if (this.position.y - this.size.h / 2 < 0) {
       this.position.y = this.size.h / 2;
-      this.speed.y = -this.speed.y;
+      this.velocity.y = -this.velocity.y;
     } else if (this.position.y + this.size.h / 2 > canvas.height) {
       this.position.y = canvas.height - this.size.h / 2;
-      this.speed.y = -this.speed.y;
+      this.velocity.y = -this.velocity.y;
     }
   }
 }
