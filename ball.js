@@ -4,11 +4,12 @@ class Ball {
     this.size = size;
     this.color = '#FFFFFF';
 
-    this.speed = { x: 0, y: 3 };
+    this.speed = { x: 3, y: 1 };
   }
 
   update() {
-    this.position.y += this.speed.y;
+    this.position.x -= this.speed.x;
+    this.position.y -= this.speed.y;
   }
 
   draw(ctx) {

@@ -44,6 +44,12 @@ class Game {
 
     if (!this.isInBounds(this.ball)) {
       this.ball.handleOutOfBounds(this.canvas);
+      this.ball.speed.y *= -1;
+    }
+
+    if (this.boundBoxCollision(this.player, this.ball) ||
+        this.boundBoxCollision(this.playerAi, this.ball)) {
+      this.ball.speed.x *= -1;
     }
   }
 
@@ -81,5 +87,12 @@ class Game {
     const size = entity.size;
 
     return pos.y - size.h / 2 > 0 && pos.y + size.h / 2 < this.canvas.height;
+  }
+
+  boundBoxCollision(box1, box2) {
+    return box1.position.x - box1.size.w / 2 < box2.position.x + box2.size.w / 2 &&
+           box1.position.x + box1.size.w / 2 > box2.position.x - box2.size.w / 2 &&
+           box1.position.y - box1.size.h / 2 < box2.position.y + box2.size.h / 2 &&
+           box1.position.y + box1.size.h / 2 > box2.position.y - box2.size.h / 2;
   }
 }
