@@ -4,6 +4,7 @@ class Paddle {
     this.size = size;
     this.color = '#FFFFFF';
     this.speed = 3;
+    this.score = 0;
   }
 
   update() {
@@ -16,16 +17,16 @@ class Paddle {
                  this.size.w, this.size.h);
   }
 
-  handleOutOfBounds(canvas) {
-    if (this.position.y + this.size.h / 2 > canvas.height) this.position.y = canvas.height - this.size.h / 2;
-    else if (this.position.y - this.size.h / 2 < 0) this.position.y = this.size.h / 2;
-  }
-
   moveUp() {
     this.position.y -= this.speed;
   }
 
   moveDown() {
     this.position.y += this.speed;
+  }
+
+  incrementScore() {
+    this.score++;
+    console.log(this.score);
   }
 }
