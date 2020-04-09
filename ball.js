@@ -4,7 +4,7 @@ class Ball {
     this.size = size;
     this.color = '#FFFFFF';
 
-    this.speed = 4; // px/s
+    this.speed = 5; // px/s
     this.velocity = { x: this.speed, y: 0 };
   }
 

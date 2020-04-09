@@ -19,13 +19,36 @@
       height: 100vh;
     }
 
+    #playerScore {
+      font-size: 20px;
+      width: 10px;
+      height: 1em;
+      color: white;
+      position: absolute;
+      padding-bottom: 330px;
+      padding-right: 490px;
+    }
+
+    #playerAiScore {
+      font-size: 20px;
+      width: 10px;
+      height: 1em;
+      color: white;
+      position: absolute;
+      padding-bottom: 330px;
+      padding-left: 490px;
+    }
+
     canvas {
       background: black;
     }
   </style>
 </head>
 <body>
+
   <div class="center">
+    <div id="playerScore"></div>
+    <div id="playerAiScore"></div>
     <canvas id="canvas"></canvas>
   </div>
 

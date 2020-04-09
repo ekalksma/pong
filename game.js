@@ -15,6 +15,11 @@ class Game {
     this.player = new Paddle({ x: playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
     this.playerAi = new Paddle({ x: this.canvas.width - playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
 
+    this.playerScore = document.getElementById('playerScore');
+    this.playerScore.innerHTML = this.player.score;
+    this.playerAiScore = document.getElementById('playerAiScore');
+    this.playerAiScore.innerHTML = this.playerAi.score;
+
     this.ball = new Ball({ x: 250,  y: 150 }, { w: 10, h: 10 });
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -66,8 +71,10 @@ class Game {
     if (!this.isInBoundsX(this.ball)) {
       if (this.ball.position.x < this.canvas.width / 2) {
         this.playerAi.incrementScore();
+        this.playerAiScore.innerHTML= this.playerAi.score;
       } else {
         this.player.incrementScore();
+        this.playerScore.innerHTML = this.player.score;
       }
 
       this.startNewRound();
@@ -138,5 +145,8 @@ class Game {
 
     this.ball.position.x = this.canvas.width / 2;
     this.ball.position.y = this.canvas.height / 2;
+
+    this.ball.velocity.y = 0;
+    if (Math.random() > 0.495) this.ball.velocity.x *= -1;
   }
 }
