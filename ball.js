@@ -19,14 +19,4 @@ class Ball {
                  this.position.y - this.size.h / 2,
                  this.size.w, this.size.h);
   }
-
-  handleOutOfBounds(canvas) {
-    if (this.position.y - this.size.h / 2 < 0) {
-      this.position.y = this.size.h / 2;
-      this.velocity.y = -this.velocity.y;
-    } else if (this.position.y + this.size.h / 2 > canvas.height) {
-      this.position.y = canvas.height - this.size.h / 2;
-      this.velocity.y = -this.velocity.y;
-    }
-  }
 }
