@@ -8,76 +8,80 @@ class Game {
 
     this.keyLeft = false;
     this.keyRight = false;
+    this.keyP = false;
+    this.pause = false;
 
     const playerWidth = 10;
     const playerHeight = 50;
 
     this.player = new Paddle({ x: playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
     this.playerAi = new Paddle({ x: this.canvas.width - playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
+    this.ball = new Ball({ x: 250,  y: 150 }, { w: 10, h: 10 });
 
     this.playerScore = document.getElementById('playerScore');
     this.playerScore.innerHTML = this.player.score;
     this.playerAiScore = document.getElementById('playerAiScore');
     this.playerAiScore.innerHTML = this.playerAi.score;
 
-    this.ball = new Ball({ x: 250,  y: 150 }, { w: 10, h: 10 });
-
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 
   update() {
-    if (this.keyLeft) this.player.moveUp();
-    if (this.keyRight) this.player.moveDown();
+    if(!this.pause)
+    {
+      if (this.keyLeft) this.player.moveUp();
+      if (this.keyRight) this.player.moveDown();
 
-    if (this.ball.position.y < this.playerAi.position.y - this.playerAi.size.h / 4) {
-      this.playerAi.moveUp();
-    } else if (this.ball.position.y > this.playerAi.position.y + this.playerAi.size.h / 4) {
-      this.playerAi.moveDown();
-    }
-
-    this.ball.update();
-
-    if (!this.isInBoundsY(this.player)) {
-      this.moveEntityOutOfWall(this.player);
-    }
-
-    if (!this.isInBoundsY(this.playerAi)) {
-      this.moveEntityOutOfWall(this.playerAi);
-    }
-
-    if (!this.isInBoundsY(this.ball)) {
-      this.ball.velocity.y *= -1;
-    }
-
-    if (this.boundingBoxCollision(this.player, this.ball)) {
-      const distanceFromPaddleOrigin = this.ball.position.y - this.player.position.y;
-      const normalizedDistance = distanceFromPaddleOrigin / (this.player.size.h / 2);
-      const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
-
-      this.ball.velocity.x = this.ball.speed * Math.cos(bounceAngle);
-      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
-    }
-
-    if (this.boundingBoxCollision(this.playerAi, this.ball)) {
-      const distanceFromPaddleOrigin = this.ball.position.y - this.playerAi.position.y;
-      const normalizedDistance = distanceFromPaddleOrigin / (this.playerAi.size.h / 2);
-      const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
-
-      this.ball.velocity.x = this.ball.speed * -Math.cos(bounceAngle);
-      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
-    }
-
-    if (!this.isInBoundsX(this.ball)) {
-      if (this.ball.position.x < this.canvas.width / 2) {
-        this.playerAi.incrementScore();
-        this.playerAiScore.innerHTML= this.playerAi.score;
-      } else {
-        this.player.incrementScore();
-        this.playerScore.innerHTML = this.player.score;
+      if (this.ball.position.y < this.playerAi.position.y - this.playerAi.size.h / 4) {
+        this.playerAi.moveUp();
+      } else if (this.ball.position.y > this.playerAi.position.y + this.playerAi.size.h / 4) {
+        this.playerAi.moveDown();
       }
 
-      this.startNewRound();
+      this.ball.update();
+
+      if (!this.isInBoundsY(this.player)) {
+        this.moveEntityOutOfWall(this.player);
+      }
+
+      if (!this.isInBoundsY(this.playerAi)) {
+        this.moveEntityOutOfWall(this.playerAi);
+      }
+
+      if (!this.isInBoundsY(this.ball)) {
+        this.ball.velocity.y *= -1;
+      }
+
+      if (this.boundingBoxCollision(this.player, this.ball)) {
+        const distanceFromPaddleOrigin = this.ball.position.y - this.player.position.y;
+        const normalizedDistance = distanceFromPaddleOrigin / (this.player.size.h / 2);
+        const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
+
+        this.ball.velocity.x = this.ball.speed * Math.cos(bounceAngle);
+        this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
+      }
+
+      if (this.boundingBoxCollision(this.playerAi, this.ball)) {
+        const distanceFromPaddleOrigin = this.ball.position.y - this.playerAi.position.y;
+        const normalizedDistance = distanceFromPaddleOrigin / (this.playerAi.size.h / 2);
+        const bounceAngle = normalizedDistance * (3 * (Math.PI / 12));
+
+        this.ball.velocity.x = this.ball.speed * -Math.cos(bounceAngle);
+        this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
+      }
+
+      if (!this.isInBoundsX(this.ball)) {
+        if (this.ball.position.x < this.canvas.width / 2) {
+          this.playerAi.incrementScore();
+          this.playerAiScore.innerHTML= this.playerAi.score;
+        } else {
+          this.player.incrementScore();
+          this.playerScore.innerHTML = this.player.score;
+        }
+
+        this.startNewRound();
+      }
     }
   }
 
@@ -103,11 +107,16 @@ class Game {
   onKeyDown(event) {
     if (event.keyCode === 65) this.keyLeft = true;
     if (event.keyCode === 68) this.keyRight = true;
+    if (event.keyCode === 80) {
+      if(!this.keyP) this.pauseGame();
+      this.keyP = true;
+    }
   }
 
   onKeyUp(event) {
     if (event.keyCode === 65) this.keyLeft = false;
     if (event.keyCode === 68) this.keyRight = false;
+    if (event.keyCode === 80) this.keyP = false;
   }
 
   isInBoundsX(entity) {
@@ -139,6 +148,14 @@ class Game {
     }
   }
 
+  pauseGame() {
+    if (!this.pause) {
+      this.pause = true;
+    } else if (this.pause) {
+      this.pause = false;
+    }
+  }
+
   startNewRound() {
     this.player.position.y = this.canvas.height / 2;
     this.playerAi.position.y = this.canvas.height / 2;
@@ -147,6 +164,8 @@ class Game {
     this.ball.position.y = this.canvas.height / 2;
 
     this.ball.velocity.y = 0;
-    if (Math.random() > 0.495) this.ball.velocity.x *= -1;
+    if (Math.random() > 0.495) {
+      this.ball.velocity.x *= -1;
+    }
   }
 }
