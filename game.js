@@ -5,30 +5,33 @@ class Game {
 
     this.canvas.width = 500;
     this.canvas.height = 300;
+    this.canvasCenter = {x: this.canvas.width / 2, y: this.canvas.height / 2}
 
     this.keyLeft = false;
     this.keyRight = false;
     this.keyP = false;
-    this.pause = false;
+    this.paused = false;
 
     const playerWidth = 10;
     const playerHeight = 50;
 
-    this.player = new Paddle({ x: playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
-    this.playerAi = new Paddle({ x: this.canvas.width - playerWidth / 2, y: this.canvas.height / 2 }, { w: playerWidth, h: playerHeight });
+    this.player = new Paddle({ x: playerWidth / 2, y: this.canvasCenter.y }, { w: playerWidth, h: playerHeight });
+    this.playerAi = new Paddle({ x: this.canvas.width - playerWidth / 2, y: this.canvasCenter.y }, { w: playerWidth, h: playerHeight });
     this.ball = new Ball({ x: 250,  y: 150 }, { w: 10, h: 10 });
 
     this.playerScore = document.getElementById('playerScore');
     this.playerScore.innerHTML = this.player.score;
     this.playerAiScore = document.getElementById('playerAiScore');
     this.playerAiScore.innerHTML = this.playerAi.score;
+    this.pauseScreen = document.getElementById('pauseScreen');
+    this.pauseScreen.style.display = 'none';
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 
   update() {
-    if(!this.pause)
+    if(!this.paused)
     {
       if (this.keyLeft) this.player.moveUp();
       if (this.keyRight) this.player.moveDown();
@@ -72,7 +75,7 @@ class Game {
       }
 
       if (!this.isInBoundsX(this.ball)) {
-        if (this.ball.position.x < this.canvas.width / 2) {
+        if (this.ball.position.x < this.canvasCenter.x) {
           this.playerAi.incrementScore();
           this.playerAiScore.innerHTML= this.playerAi.score;
         } else {
@@ -108,7 +111,7 @@ class Game {
     if (event.keyCode === 65) this.keyLeft = true;
     if (event.keyCode === 68) this.keyRight = true;
     if (event.keyCode === 80) {
-      if(!this.keyP) this.pauseGame();
+      if(!this.keyP) this.togglePause();
       this.keyP = true;
     }
   }
@@ -148,20 +151,30 @@ class Game {
     }
   }
 
-  pauseGame() {
-    if (!this.pause) {
-      this.pause = true;
-    } else if (this.pause) {
-      this.pause = false;
+  togglePause() {
+    if (this.paused) {
+      this.resume();
+    } else if (!this.paused) {
+      this.pause();
     }
   }
 
-  startNewRound() {
-    this.player.position.y = this.canvas.height / 2;
-    this.playerAi.position.y = this.canvas.height / 2;
+  pause() {
+    this.paused = true;
+    this.pauseScreen.style.display = 'block';
+  }
 
-    this.ball.position.x = this.canvas.width / 2;
-    this.ball.position.y = this.canvas.height / 2;
+  resume() {
+    this.paused = false;
+    this.pauseScreen.style.display = 'none';
+  }
+
+  startNewRound() {
+    this.player.position.y = this.canvasCenter.y;
+    this.playerAi.position.y = this.canvasCenter.y;
+
+    this.ball.position.x = this.canvasCenter.x;
+    this.ball.position.y = this.canvasCenter.y;
 
     this.ball.velocity.y = 0;
     if (Math.random() > 0.495) {

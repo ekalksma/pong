@@ -16,6 +16,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      height: 100%;
+    }
+
+    #container {
       height: 100vh;
     }
 
@@ -26,7 +30,7 @@
       color: white;
       position: absolute;
       padding-bottom: 330px;
-      padding-right: 490px;
+      padding-right: 245px;
     }
 
     #playerAiScore {
@@ -36,7 +40,21 @@
       color: white;
       position: absolute;
       padding-bottom: 330px;
-      padding-left: 490px;
+      padding-left: 245px;
+    }
+
+    #pauseScreen {
+      position: absolute;
+      width: 500px;
+      height: 300px;
+      text-align: center;
+      display: block;
+    }
+
+    #pauseScreen h2 {
+      color: white;
+      text-transform: uppercase;
+      z-index: 1;
     }
 
     canvas {
@@ -45,11 +63,17 @@
   </style>
 </head>
 <body>
-
-  <div class="center">
-    <div id="playerScore"></div>
-    <div id="playerAiScore"></div>
-    <canvas id="canvas"></canvas>
+  <div id="container">
+    <div class="center">
+      <div id="playerScore"></div>
+      <div id="playerAiScore"></div>
+      <div id="pauseScreen">
+        <div class="center">
+          <h2>Paused</h2>
+        </div>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
   </div>
 
   <script src="./paddle.js"></script>
