@@ -1,22 +1,13 @@
-class Ball {
-  constructor(position, size) {
-    this.position = position;
-    this.size = size;
-    this.color = '#FFFFFF';
+class Ball extends Entity {
+  constructor() {
+    super({ w: 10, h: 10 });
 
-    this.speed = 5; // px/s
+    this.speed = 5;
     this.velocity = { x: this.speed, y: 0 };
   }
 
   update() {
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.position.x - this.size.w / 2,
-                 this.position.y - this.size.h / 2,
-                 this.size.w, this.size.h);
   }
 }

@@ -5,29 +5,30 @@ class Game {
 
     this.canvas.width = 500;
     this.canvas.height = 300;
-    this.canvasCenter = {x: this.canvas.width / 2, y: this.canvas.height / 2}
+    this.canvasCenter = { x: this.canvas.width / 2, y: this.canvas.height / 2 };
 
     this.keyLeft = false;
     this.keyRight = false;
     this.keyP = false;
     this.paused = false;
 
-    const playerWidth = 10;
-    const playerHeight = 50;
-
-    this.player = new Paddle({ x: playerWidth / 2, y: this.canvasCenter.y }, { w: playerWidth, h: playerHeight });
-    this.playerAi = new Paddle({ x: this.canvas.width - playerWidth / 2, y: this.canvasCenter.y }, { w: playerWidth, h: playerHeight });
-    this.ball = new Ball({ x: 250,  y: 150 }, { w: 10, h: 10 });
+    this.player = new Paddle();
+    this.playerAi = new Paddle();
+    this.ball = new Ball();
 
     this.playerScore = document.getElementById('playerScore');
     this.playerScore.innerHTML = this.player.score;
+
     this.playerAiScore = document.getElementById('playerAiScore');
     this.playerAiScore.innerHTML = this.playerAi.score;
+
     this.pauseScreen = document.getElementById('pauseScreen');
     this.pauseScreen.style.display = 'none';
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
+
+    this.startNewRound();
   }
 
   update() {
@@ -137,7 +138,7 @@ class Game {
   }
 
   boundingBoxCollision(box1, box2) {
-    return box1.position.x - box1.size.w / 2 < box2.position.x + box2.size.w / 2 &&
+    return box1.left < box2.right &&
            box1.position.x + box1.size.w / 2 > box2.position.x - box2.size.w / 2 &&
            box1.position.y - box1.size.h / 2 < box2.position.y + box2.size.h / 2 &&
            box1.position.y + box1.size.h / 2 > box2.position.y - box2.size.h / 2;
@@ -170,11 +171,9 @@ class Game {
   }
 
   startNewRound() {
-    this.player.position.y = this.canvasCenter.y;
-    this.playerAi.position.y = this.canvasCenter.y;
-
-    this.ball.position.x = this.canvasCenter.x;
-    this.ball.position.y = this.canvasCenter.y;
+    this.player.setPosition(this.player.size.w, this.canvasCenter.y);
+    this.playerAi.setPosition(this.canvas.width - this.player.size.w, this.canvasCenter.y);
+    this.ball.setPosition(this.canvasCenter.x, this.canvasCenter.y);
 
     this.ball.velocity.y = 0;
     if (Math.random() > 0.495) {
