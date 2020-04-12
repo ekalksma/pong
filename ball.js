@@ -10,4 +10,12 @@ class Ball extends Entity {
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }
+
+  setRandomVelocity() {
+    this.velocity.y = 0;
+
+    if (Math.random() < 0.495) {
+      this.velocity.x *= -1;
+    }
+  }
 }

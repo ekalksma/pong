@@ -16,6 +16,5 @@ class Paddle extends Entity {
 
   incrementScore() {
     this.score++;
-    console.log(this.score);
   }
 }
