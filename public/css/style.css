@@ -1,0 +1,56 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: black;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+#container {
+  height: 100vh;
+}
+
+#playerScore {
+  font-size: 20px;
+  width: 10px;
+  height: 1em;
+  color: white;
+  position: absolute;
+  padding-bottom: 330px;
+  padding-right: 245px;
+}
+
+#playerAiScore {
+  font-size: 20px;
+  width: 10px;
+  height: 1em;
+  color: white;
+  position: absolute;
+  padding-bottom: 330px;
+  padding-left: 245px;
+}
+
+.overlay {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  text-align: center;
+  display: block;
+  padding-bottom: 50px;
+}
+
+.overlay h2 {
+  color: white;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+canvas {
+  background: black;
+}

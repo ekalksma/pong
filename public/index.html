@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pong</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="center">
+      <div id="playerScore"></div>
+      <div id="playerAiScore"></div>
+      <div id="pauseScreen" class="overlay">
+        <div class="center">
+          <h2>Paused</h2>
+        </div>
+      </div>
+      <div id="startScreen" class="overlay">
+        <div class="center">
+          <h2>To start, press any key</h2>
+        </div>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+  <script src="./js/entity.js"></script>
+  <script src="./js/paddle.js"></script>
+  <script src="./js/ball.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
