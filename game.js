@@ -10,31 +10,34 @@ class Game {
     this.keyLeft = false;
     this.keyRight = false;
     this.keyP = false;
-    this.paused = false;
+    this.paused = true;
+    this.isNewRound = true;
 
     this.player = new Paddle();
     this.playerAi = new Paddle();
     this.ball = new Ball();
     this.winLimit = 3;
 
-    this.playerScore = document.getElementById('playerScore');
-    this.playerScore.innerHTML = this.player.score;
+    this.playerScoreboard = document.getElementById('playerScore');
+    this.playerScoreboard.innerHTML = this.player.score;
 
-    this.playerAiScore = document.getElementById('playerAiScore');
-    this.playerAiScore.innerHTML = this.playerAi.score;
+    this.AiScoreboard = document.getElementById('playerAiScore');
+    this.AiScoreboard.innerHTML = this.playerAi.score;
 
     this.pauseScreen = document.getElementById('pauseScreen');
     this.pauseScreen.style.display = 'none';
 
+    this.startScreen = document.getElementById('startScreen');
+    this.startScreen.style.display = 'block';
+
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
+    window.addEventListener('keypress', this.onKeyPress.bind(this));
 
     this.startNewRound();
   }
 
   update() {
-    if (this.player.score === 5 || this.playerAi.score === 5) this.startNewRound();
-
     if(!this.paused)
     {
       if (this.keyLeft) this.player.moveUp();
@@ -77,12 +80,12 @@ class Game {
       }
 
       if (!this.isInBoundsX(this.ball)) {
-        if (this.ball.position.x < this.canvasCenter.x && this.playerAiScore) {
+        if (this.ball.position.x < this.canvasCenter.x && this.AiScoreboard) {
           this.playerAi.incrementScore();
-          this.updateDomElement(this.playerAiScore, this.playerAi.score);
+          this.updateDomElement(this.AiScoreboard, this.playerAi.score);
         } else {
           this.player.incrementScore();
-          this.updateDomElement(this.playerScore, this.player.score);
+          this.updateDomElement(this.playerScoreboard, this.player.score);
         }
 
         this.startNewRound();
@@ -122,6 +125,15 @@ class Game {
     if (event.keyCode === 65) this.keyLeft = false;
     if (event.keyCode === 68) this.keyRight = false;
     if (event.keyCode === 80) this.keyP = false;
+  }
+
+  onKeyPress() {
+    if (this.isNewRound) {
+      this.hideDomElement(this.startScreen);
+      this.resume();
+
+      this.isNewRound = false;
+    }
   }
 
   isInBoundsX(entity) {
@@ -168,7 +180,7 @@ class Game {
 
   resume() {
     this.paused = false;
-    this.hideElement(this.pauseScreen);
+    this.hideDomElement(this.pauseScreen);
   }
 
   startNewRound() {
@@ -182,8 +194,11 @@ class Game {
       this.player.score = 0;
       this.playerAi.score = 0;
 
-      this.updateDomElement(this.playerScore, this.player.score);
-      this.updateDomElement(this.playerAiScore, this.playerAi.score);
+      this.updateDomElement(this.playerScoreboard, this.player.score);
+      this.updateDomElement(this.AiScoreboard, this.playerAi.score);
+      this.paused = true;
+      this.isNewRound = true;
+      this.showDomElement(this.startScreen);
     }
   }
 
@@ -196,7 +211,7 @@ class Game {
   }
 
   isWin(player) {
-    return this.player.score === this.winLimit;
+    return player.score === this.winLimit;
   }
 
   updateDomElement(element, text) {

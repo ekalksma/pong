@@ -43,15 +43,16 @@
       padding-left: 245px;
     }
 
-    #pauseScreen {
+    .overlay {
       position: absolute;
       width: 500px;
       height: 300px;
       text-align: center;
       display: block;
+      padding-bottom: 50px;
     }
 
-    #pauseScreen h2 {
+    .overlay h2 {
       color: white;
       text-transform: uppercase;
       z-index: 1;
@@ -67,9 +68,14 @@
     <div class="center">
       <div id="playerScore"></div>
       <div id="playerAiScore"></div>
-      <div id="pauseScreen">
+      <div id="pauseScreen" class="overlay">
         <div class="center">
           <h2>Paused</h2>
+        </div>
+      </div>
+      <div id="startScreen" class="overlay">
+        <div class="center">
+          <h2>To start, press any key</h2>
         </div>
       </div>
       <canvas id="canvas"></canvas>
