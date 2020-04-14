@@ -10,25 +10,29 @@ class Game {
     this.keyLeft = false;
     this.keyRight = false;
     this.keyP = false;
+
     this.paused = true;
     this.isNewRound = true;
 
     this.player = new Paddle();
     this.playerAi = new Paddle();
     this.ball = new Ball();
+
     this.winLimit = 3;
 
-    this.playerScoreboard = document.getElementById('playerScore');
-    this.playerScoreboard.innerHTML = this.player.score;
+    this.domElements = {
+      startOverlay: document.getElementById('startOverlay'),
+      pauseOverlay:  document.getElementById('pauseOverlay'),
+      playerScore: document.getElementById('playerScore'),
+      playerAiScore: document.getElementById('playerAiScore'),
+      winOverlay: document.getElementById('winOverlay')
+    }
 
-    this.AiScoreboard = document.getElementById('playerAiScore');
-    this.AiScoreboard.innerHTML = this.playerAi.score;
-
-    this.pauseScreen = document.getElementById('pauseScreen');
-    this.pauseScreen.style.display = 'none';
-
-    this.startScreen = document.getElementById('startScreen');
-    this.startScreen.style.display = 'block';
+    this.updateDomElement(this.domElements.playerScore, this.playerAi.score);
+    this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
+    this.hideDomElement(this.domElements.pauseOverlay);
+    this.hideDomElement(this.domElements.winOverlay);
+    this.showDomElement(this.domElements.startOverlay);
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
@@ -38,58 +42,57 @@ class Game {
   }
 
   update() {
-    if(!this.paused)
-    {
-      if (this.keyLeft) this.player.moveUp();
-      if (this.keyRight) this.player.moveDown();
+    if(this.paused) return;
 
-      if (this.ball.position.y < this.playerAi.position.y - this.playerAi.size.h / 4) {
-        this.playerAi.moveUp();
-      } else if (this.ball.position.y > this.playerAi.position.y + this.playerAi.size.h / 4) {
-        this.playerAi.moveDown();
+    if (this.keyLeft) this.player.moveUp();
+    if (this.keyRight) this.player.moveDown();
+
+    if (this.ball.position.y < this.playerAi.position.y - this.playerAi.size.h / 4) {
+      this.playerAi.moveUp();
+    } else if (this.ball.position.y > this.playerAi.position.y + this.playerAi.size.h / 4) {
+      this.playerAi.moveDown();
+    }
+
+    this.ball.update();
+
+    if (!this.isInBoundsY(this.player)) {
+      this.moveEntityOutOfWall(this.player);
+    }
+
+    if (!this.isInBoundsY(this.playerAi)) {
+      this.moveEntityOutOfWall(this.playerAi);
+    }
+
+    if (!this.isInBoundsY(this.ball)) {
+      this.ball.velocity.y *= -1;
+
+      this.moveEntityOutOfWall(this.ball);
+    }
+
+    if (this.boundingBoxCollision(this.player, this.ball)) {
+      const bounceAngle = this.getBounceAngle(this.player, this.ball);
+
+      this.ball.velocity.x = this.ball.speed * Math.cos(bounceAngle);
+      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
+    }
+
+    if (this.boundingBoxCollision(this.playerAi, this.ball)) {
+      const bounceAngle = this.getBounceAngle(this.playerAi, this.ball);
+
+      this.ball.velocity.x = this.ball.speed * -Math.cos(bounceAngle);
+      this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
+    }
+
+    if (!this.isInBoundsX(this.ball)) {
+      if (this.ball.position.x < this.canvasCenter.x) {
+        this.playerAi.incrementScore();
+        this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
+      } else {
+        this.player.incrementScore();
+        this.updateDomElement(this.domElements.playerScore, this.player.score);
       }
 
-      this.ball.update();
-
-      if (!this.isInBoundsY(this.player)) {
-        this.moveEntityOutOfWall(this.player);
-      }
-
-      if (!this.isInBoundsY(this.playerAi)) {
-        this.moveEntityOutOfWall(this.playerAi);
-      }
-
-      if (!this.isInBoundsY(this.ball)) {
-        this.ball.velocity.y *= -1;
-
-        this.moveEntityOutOfWall(this.ball);
-      }
-
-      if (this.boundingBoxCollision(this.player, this.ball)) {
-        const bounceAngle = this.getBounceAngle(this.player, this.ball);
-
-        this.ball.velocity.x = this.ball.speed * Math.cos(bounceAngle);
-        this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
-      }
-
-      if (this.boundingBoxCollision(this.playerAi, this.ball)) {
-        const bounceAngle = this.getBounceAngle(this.playerAi, this.ball);
-
-        this.ball.velocity.x = this.ball.speed * -Math.cos(bounceAngle);
-        this.ball.velocity.y = this.ball.speed * Math.sin(bounceAngle);
-      }
-
-      if (!this.isInBoundsX(this.ball)) {
-        if (this.ball.position.x < this.canvasCenter.x && this.AiScoreboard) {
-          this.playerAi.incrementScore();
-          this.updateDomElement(this.AiScoreboard, this.playerAi.score);
-        } else {
-          this.player.incrementScore();
-          this.updateDomElement(this.playerScoreboard, this.player.score);
-        }
-
-        this.startNewRound();
-      }
+      this.startNewRound();
     }
   }
 
@@ -129,7 +132,7 @@ class Game {
 
   onKeyPress() {
     if (this.isNewRound) {
-      this.hideDomElement(this.startScreen);
+      this.hideDomElement(this.domElements.startOverlay);
       this.resume();
 
       this.isNewRound = false;
@@ -175,12 +178,12 @@ class Game {
 
   pause() {
     this.paused = true;
-    this.showDomElement(this.pauseScreen);
+    this.showDomElement(this.domElements.pauseOverlay);
   }
 
   resume() {
     this.paused = false;
-    this.hideDomElement(this.pauseScreen);
+    this.hideDomElement(this.domElements.pauseOverlay);
   }
 
   startNewRound() {
@@ -190,16 +193,7 @@ class Game {
 
     this.ball.setRandomVelocity();
 
-    if (this.isWin(this.player) || this.isWin(this.playerAi)) {
-      this.player.score = 0;
-      this.playerAi.score = 0;
-
-      this.updateDomElement(this.playerScoreboard, this.player.score);
-      this.updateDomElement(this.AiScoreboard, this.playerAi.score);
-      this.paused = true;
-      this.isNewRound = true;
-      this.showDomElement(this.startScreen);
-    }
+    this.CheckWinner();
   }
 
   getBounceAngle(player, ball) {
@@ -212,6 +206,29 @@ class Game {
 
   isWin(player) {
     return player.score === this.winLimit;
+  }
+
+  CheckWinner() {
+    if (this.isWin(this.player) || this.isWin(this.playerAi)) {
+      if (this.isWin(this.player)) {
+        document.querySelector('#winOverlay > .center h2').innerText = "Player Wins";
+      } else {
+        document.querySelector('#winOverlay > .center h2').innerText = "Ai Wins";
+      }
+
+      this.showDomElement(this.domElements.winOverlay);
+      this.paused = true;
+
+      setTimeout( ()=> {
+        this.isNewRound = true;
+        this.player.score = 0;
+        this.playerAi.score = 0;
+        this.updateDomElement(this.domElements.playerScore, this.player.score);
+        this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
+        this.hideDomElement(this.domElements.winOverlay);
+        this.showDomElement(this.domElements.startOverlay);
+      }, 2000)
+    }
   }
 
   updateDomElement(element, text) {
