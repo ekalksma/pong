@@ -1,8 +1,16 @@
+@font-face {
+  font-family: pixelFont;
+  src: url(../font/Minecraft.ttf);
+}
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   background: black;
+  font-family: pixelFont;
+  user-select: none;
+  cursor: none;
 }
 
 .center {
