@@ -5,7 +5,7 @@ class Game {
 
     this.canvas.width = 500;
     this.canvas.height = 300;
-    this.canvasCenter = { x: this.canvas.width / 2, y: this.canvas.height / 2 };
+    this.canvas.center = { x: this.canvas.width / 2, y: this.canvas.height / 2 };
 
     this.keyLeft = false;
     this.keyRight = false;
@@ -18,31 +18,26 @@ class Game {
     this.playerAi = new Paddle();
     this.ball = new Ball();
 
-    this.winLimit = 3;
+    this.winScore = 3;
 
     this.domElements = {
       startOverlay: document.getElementById('startOverlay'),
       pauseOverlay:  document.getElementById('pauseOverlay'),
       playerScore: document.getElementById('playerScore'),
       playerAiScore: document.getElementById('playerAiScore'),
-      winOverlay: document.getElementById('winOverlay')
+      winOverlay: document.getElementById('winOverlay'),
+      winText: document.querySelector('#winOverlay > .center h2')
     }
-
-    this.updateDomElement(this.domElements.playerScore, this.playerAi.score);
-    this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
-    this.hideDomElement(this.domElements.pauseOverlay);
-    this.hideDomElement(this.domElements.winOverlay);
-    this.showDomElement(this.domElements.startOverlay);
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
     window.addEventListener('keyup', this.onKeyUp.bind(this));
     window.addEventListener('keypress', this.onKeyPress.bind(this));
 
-    this.startNewRound();
+    this.reset();
   }
 
   update() {
-    if(this.paused) return;
+    if (this.paused) return;
 
     if (this.keyLeft) this.player.moveUp();
     if (this.keyRight) this.player.moveDown();
@@ -84,7 +79,7 @@ class Game {
     }
 
     if (!this.isInBoundsX(this.ball)) {
-      if (this.ball.position.x < this.canvasCenter.x) {
+      if (this.ball.position.x < this.canvas.center.x) {
         this.playerAi.incrementScore();
         this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
       } else {
@@ -92,7 +87,13 @@ class Game {
         this.updateDomElement(this.domElements.playerScore, this.player.score);
       }
 
-      this.startNewRound();
+      if (this.isGameOver()) {
+        this.paused = true;
+        this.showWinner();
+        setTimeout(this.reset.bind(this), 2000);
+      } else {
+        this.startNewRound();
+      }
     }
   }
 
@@ -187,13 +188,10 @@ class Game {
   }
 
   startNewRound() {
-    this.player.setPosition(this.player.size.w, this.canvasCenter.y);
-    this.playerAi.setPosition(this.canvas.width - this.player.size.w, this.canvasCenter.y);
-    this.ball.setPosition(this.canvasCenter.x, this.canvasCenter.y);
-
+    this.player.setPosition(this.player.size.w, this.canvas.center.y);
+    this.playerAi.setPosition(this.canvas.width - this.player.size.w, this.canvas.center.y);
+    this.ball.setPosition(this.canvas.center.x, this.canvas.center.y);
     this.ball.setRandomVelocity();
-
-    this.CheckWinner();
   }
 
   getBounceAngle(player, ball) {
@@ -205,30 +203,11 @@ class Game {
   }
 
   isWin(player) {
-    return player.score === this.winLimit;
+    return player.score === this.winScore;
   }
 
-  CheckWinner() {
-    if (this.isWin(this.player) || this.isWin(this.playerAi)) {
-      if (this.isWin(this.player)) {
-        document.querySelector('#winOverlay > .center h2').innerText = "Player Wins";
-      } else {
-        document.querySelector('#winOverlay > .center h2').innerText = "Ai Wins";
-      }
-
-      this.showDomElement(this.domElements.winOverlay);
-      this.paused = true;
-
-      setTimeout( ()=> {
-        this.isNewRound = true;
-        this.player.score = 0;
-        this.playerAi.score = 0;
-        this.updateDomElement(this.domElements.playerScore, this.player.score);
-        this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
-        this.hideDomElement(this.domElements.winOverlay);
-        this.showDomElement(this.domElements.startOverlay);
-      }, 2000)
-    }
+  isGameOver() {
+    return this.isWin(this.player) || this.isWin(this.playerAi);
   }
 
   updateDomElement(element, text) {
@@ -241,5 +220,23 @@ class Game {
 
   hideDomElement(element) {
     element.style.display = 'none';
+  }
+
+  showWinner() {
+    const winText = this.isWin(this.player) ? 'Player Wins' : 'Computer Wins';
+    this.updateDomElement(this.domElements.winText, winText);
+    this.showDomElement(this.domElements.winOverlay);
+  }
+
+  reset() {
+    this.isNewRound = true;
+    this.player.score = 0;
+    this.playerAi.score = 0;
+    this.updateDomElement(this.domElements.playerScore, this.player.score);
+    this.updateDomElement(this.domElements.playerAiScore, this.playerAi.score);
+    this.hideDomElement(this.domElements.pauseOverlay);
+    this.hideDomElement(this.domElements.winOverlay);
+    this.showDomElement(this.domElements.startOverlay);
+    this.startNewRound();
   }
 }
