@@ -9,6 +9,7 @@ body {
   box-sizing: border-box;
   background: black;
   font-family: pixelFont;
+  letter-spacing: 3px;
   user-select: none;
   cursor: none;
 }
