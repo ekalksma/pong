@@ -21,12 +21,11 @@ class Game {
     this.winScore = 3;
 
     this.domElements = {
-      startOverlay: document.getElementById('startOverlay'),
-      pauseOverlay:  document.getElementById('pauseOverlay'),
-      playerScore: document.getElementById('playerScore'),
-      playerAiScore: document.getElementById('playerAiScore'),
-      winOverlay: document.getElementById('winOverlay'),
-      winText: document.querySelector('#winOverlay > .center h2')
+      startOverlay: document.getElementById('pong-start-screen'),
+      pauseOverlay:  document.getElementById('pong-pause-screen'),
+      playerScore: document.getElementById('pong-player-score'),
+      playerAiScore: document.getElementById('pong-ai-score'),
+      winOverlay: document.getElementById('pong-win-screen')
     }
 
     window.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -224,7 +223,7 @@ class Game {
 
   showWinner() {
     const winText = this.isWin(this.player) ? 'Player Wins' : 'Computer Wins';
-    this.updateDomElement(this.domElements.winText, winText);
+    this.updateDomElement(this.domElements.winOverlay, winText);
     this.showDomElement(this.domElements.winOverlay);
   }
 

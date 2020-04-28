@@ -14,52 +14,41 @@ body {
   cursor: none;
 }
 
-.center {
+.pong-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-}
-
-#container {
   height: 100vh;
 }
 
-#playerScore {
-  font-size: 20px;
-  width: 10px;
-  height: 1em;
-  color: white;
-  position: absolute;
-  padding-bottom: 330px;
-  padding-right: 245px;
-}
-
-#playerAiScore {
-  font-size: 20px;
-  width: 10px;
-  height: 1em;
-  color: white;
-  position: absolute;
-  padding-bottom: 330px;
-  padding-left: 245px;
-}
-
-.overlay {
-  position: absolute;
-  width: 500px;
-  height: 300px;
-  text-align: center;
-  display: block;
-  padding-bottom: 50px;
-}
-
-.overlay h2 {
+.pong {
+  position: relative;
   color: white;
   text-transform: uppercase;
-  z-index: 1;
 }
 
-canvas {
-  background: black;
+#pong-player-score, #pong-ai-score {
+  position: absolute;
+  top: -20px;
+  left: 5px;
+  font-size: 20px;
+  width: 10px;
+  height: 1em;
+  color: white;
+}
+
+#pong-ai-score {
+  left: 485px;
+}
+
+#pong-start-screen,
+#pong-win-screen, #pong-pause-screen {
+  position: absolute;
+  font-size: 24px;
+  left: 50%;
+  top: 43%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: none;
 }

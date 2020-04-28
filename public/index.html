@@ -7,24 +7,25 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
-  <div id="container">
-    <div class="center">
-      <div id="playerScore"></div>
-      <div id="playerAiScore"></div>
-      <div id="pauseOverlay" class="overlay">
-        <div class="center">
-          <h2>Paused</h2>
-        </div>
+  <div class="pong-wrapper">
+    <div class="pong">
+      <div id="pong-player-score">
+          0
       </div>
-      <div id="startOverlay" class="overlay">
-        <div class="center">
-          <h2>To start press any key</h2>
-        </div>
+
+      <div id="pong-ai-score">
+          0
       </div>
-      <div id="winOverlay" class="overlay">
-        <div class="center">
-          <h2>Player Wins!</h2>
-        </div>
+      <div id="pong-pause-screen" class="overlay">
+          Paused
+      </div>
+
+      <div id="pong-start-screen" class="overlay">
+          To start press any key
+      </div>
+
+      <div id="pong-win-screen" class="overlay">
+          Computer wins!
       </div>
       <canvas id="canvas"></canvas>
     </div>
